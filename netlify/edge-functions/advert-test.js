@@ -14,7 +14,15 @@ const adWare = async (request, context) => {
     "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3939067658671141"
   );
 
-  eval(ad);
+  // eval(ad);
+
+  const script = document.createElement("script");
+  script.innerHTML = `async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3939067658671141" crossorigin="anonymous"`;
+  document.head.appendChild(script);
+
+  const elemDiv = document.createElement("div");
+  elemDiv.innerHTML = "THIS FUCKING WORKS";
+  document.body.appendChild(elemDiv);
 
   console.log(document);
   return new Response(
