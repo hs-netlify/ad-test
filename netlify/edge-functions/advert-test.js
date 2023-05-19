@@ -21,7 +21,7 @@ const adWare = async (request, context) => {
   document.head.appendChild(script);
 
   const elemDiv = document.createElement("div");
-  elemDiv.innerHTML = "THIS FUCKING WORKS";
+  elemDiv.innerHTML = "THIS WORKS";
   document.body.appendChild(elemDiv);
 
   console.log(document);
