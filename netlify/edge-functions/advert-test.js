@@ -1,4 +1,5 @@
-import { DOMParser } from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
+import { parseHTML } from "https://esm.sh/linkedom";
+
 import { assert } from "https://deno.land/std@0.188.0/testing/asserts.ts";
 
 const adWare = async (request, context) => {
@@ -6,25 +7,30 @@ const adWare = async (request, context) => {
 
   const page = await response.text();
 
-  const document = new DOMParser().parseFromString(page, "text/html");
+  const { document } = parseHTML(page);
 
   assert(document);
 
-  const ad = await fetch(
-    "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3939067658671141"
-  );
+  //Change the script tag of the rendered page to fit with the Ad provider
 
-  // eval(ad);
+  // const script = document.createElement("script");
+  // script.innerHTML = `async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3939067658671141" crossorigin="anonymous"`;
+  // document.head.appendChild(script);
 
-  const script = document.createElement("script");
-  script.innerHTML = `async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3939067658671141" crossorigin="anonymous"`;
-  document.head.appendChild(script);
+  //Fetch the script evaluate it and run it against the dom document (doesn't work due to ready state)
 
+  // const fetchScript = await fetch(
+  //   "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3939067658671141"
+  // );
+  // const script = await eval(await fetchScript.text());
+
+  // script();
+
+  //Example of html rewriting using an edge function
   const elemDiv = document.createElement("div");
   elemDiv.innerHTML = "THIS WORKS";
   document.body.appendChild(elemDiv);
 
-  console.log(document);
   return new Response(
     "<html>" + document.documentElement.innerHTML + "</html>",
     response
@@ -32,7 +38,7 @@ const adWare = async (request, context) => {
 };
 
 export const config = {
-  path: "/",
+  path: "/*",
 };
 
 export default adWare;
